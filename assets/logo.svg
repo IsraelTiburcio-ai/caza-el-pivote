@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-labelledby="title">
+  <title id="title">Símbolo de pivote en una tabla simplex</title>
+  <rect x="4" y="4" width="56" height="56" rx="15" fill="#0d1b28" stroke="#2b4659" stroke-width="2"/>
+  <path d="M14 20h36M14 32h36M14 44h36M26 14v36M38 14v36" stroke="#38566a" stroke-width="2"/>
+  <path d="M26 20h12v12H26z" fill="#52e4ef" fill-opacity=".22" stroke="#52e4ef" stroke-width="2"/>
+  <path d="M26 32h12v12H26z" fill="#d9fa72" stroke="#f0ffbf" stroke-width="2"/>
+  <path d="M20 38h24M32 26v24" stroke="#f1f7fa" stroke-width="1" stroke-opacity=".4"/>
+  <circle cx="32" cy="38" r="18" fill="none" stroke="#d9fa72" stroke-width="1.5" stroke-dasharray="3 4"/>
+</svg>

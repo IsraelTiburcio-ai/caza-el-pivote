@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#08131e">
+  <meta name="description" content="Microjuego educativo para encontrar la columna, el renglón y el elemento pivote del método simplex.">
+  <title>Caza el pivote · Gimnasio 3</title>
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="styles.css">
+  <script src="data.js" defer></script>
+  <script src="script.js" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#main">Saltar al juego</a>
+  <header class="site-header">
+    <a class="brand" href="#inicio" aria-label="Caza el pivote, inicio">
+      <img src="assets/logo.svg" alt="" width="42" height="42">
+      <span><strong>GIMNASIO 3</strong><small>MÉTODO SIMPLEX</small></span>
+    </a>
+    <button class="icon-button sound-toggle" id="sound-toggle" type="button" aria-label="Activar sonido" aria-pressed="false">
+      <span class="sound-on" aria-hidden="true">♫</span><span class="sound-off" aria-hidden="true">♪</span>
+      <span class="sound-label">Sonido</span>
+    </button>
+  </header>
+
+  <main id="main" class="app-shell">
+    <section class="screen home-screen" id="screen-home" aria-labelledby="game-title">
+      <div class="home-copy">
+        <p class="eyebrow"><span class="pulse-dot"></span> RETO DE OPTIMIZACIÓN</p>
+        <h1 id="game-title">CAZA EL<br><em>PIVOTE</em></h1>
+        <p class="subtitle">Encuentra columna, renglón y elemento pivote</p>
+        <p class="intro-text">Lee la tabla simplex. Sigue el criterio y marca la intersección correcta antes de que se acabe el tiempo.</p>
+        <div class="home-actions">
+          <button class="button button-primary" id="play-button" type="button">Iniciar partida <span aria-hidden="true">→</span></button>
+          <p class="play-meta"><span>5 tablas</span><span aria-hidden="true">·</span><span>hasta 2 min</span><span aria-hidden="true">·</span><span>sin cálculos largos</span></p>
+        </div>
+      </div>
+      <div class="home-side">
+        <div class="preview-card" aria-label="Vista previa: tabla simplex con columna, renglón y pivote resaltados">
+          <div class="preview-top"><span>TABLEAU / 01</span><span class="live-tag">EN VIVO</span></div>
+          <div class="preview-grid" aria-hidden="true">
+            <span class="pv-head">Base</span><span class="pv-head">x₁</span><span class="pv-head pv-col">x₂</span><span class="pv-head">Sol.</span>
+            <span class="pv-base">s₁</span><span>2</span><span class="pv-col">4</span><span>12</span>
+            <span class="pv-base pv-row">s₂</span><span class="pv-row">1</span><span class="pv-cell">3</span><span class="pv-row">9</span>
+            <span class="pv-base pv-z">zⱼ−cⱼ</span><span class="pv-z">−3</span><span class="pv-z pv-col">−6</span><span class="pv-z">0</span>
+          </div>
+          <div class="legend"><span><i class="legend-col"></i>columna</span><span><i class="legend-row"></i>renglón</span><span><i class="legend-pivot"></i>pivote</span></div>
+          <div class="record-line">RÉCORD PERSONAL <strong id="home-best">—</strong></div>
+        </div>
+        <div class="how-card">
+          <h2>La cacería, en 3 pasos</h2>
+          <ol>
+            <li><span>01</span><div><strong>Columna pivote</strong><small>El zⱼ − cⱼ más negativo.</small></div></li>
+            <li><span>02</span><div><strong>Renglón pivote</strong><small>La razón mínima, solo con y &gt; 0.</small></div></li>
+            <li><span>03</span><div><strong>Elemento pivote</strong><small>La intersección de ambos.</small></div></li>
+          </ol>
+        </div>
+      </div>
+    </section>
+
+    <section class="screen game-screen" id="screen-game" hidden aria-labelledby="round-heading">
+      <div class="game-side">
+        <div class="round-topline">
+          <div><p class="eyebrow">PARTIDA EN CURSO</p><h1 id="round-heading">Tabla <span id="round-number">1</span><small id="round-total">/ 5</small></h1></div>
+          <button class="icon-button pause-button" id="pause-button" type="button" aria-label="Pausar partida"><span aria-hidden="true">Ⅱ</span><span class="pause-text">Pausa</span></button>
+        </div>
+        <div class="hud" aria-label="Marcador de la partida">
+          <div class="hud-stat hud-time"><span>TIEMPO</span><strong id="timer">2:00</strong></div>
+          <div class="hud-stat"><span>ACIERTOS</span><strong id="hits">0</strong></div>
+          <div class="hud-stat"><span>PUNTOS</span><strong id="score">0</strong></div>
+          <div class="hud-stat"><span>RACHA</span><strong id="streak">0</strong></div>
+        </div>
+        <div class="round-progress" id="round-progress" aria-label="Progreso de tablas"></div>
+        <ol class="stepper" aria-label="Pasos para encontrar el pivote">
+          <li class="step is-active" data-step="0"><span>1</span><b>Columna</b></li>
+          <li class="step" data-step="1"><span>2</span><b>Renglón</b></li>
+          <li class="step" data-step="2"><span>3</span><b>Elemento</b></li>
+        </ol>
+        <div class="prompt-card" id="prompt-card">
+          <span class="prompt-kicker" id="prompt-kicker">PASO 1 DE 3</span>
+          <h2 id="prompt-title" tabindex="-1">Toca la columna pivote</h2>
+          <p id="prompt-detail">En maximización, busca el valor más negativo en zⱼ − cⱼ.</p>
+        </div>
+        <div class="feedback" id="feedback" role="status" aria-live="polite" aria-atomic="true">
+          <span class="feedback-mark" id="feedback-mark" aria-hidden="true">i</span>
+          <p id="feedback-text">Elige una columna para comenzar.</p>
+        </div>
+        <div class="summary-card" id="summary-card" hidden></div>
+        <div class="game-actions">
+          <button class="button button-quiet" id="hint-button" type="button">Pista <span aria-hidden="true">⌁</span></button>
+          <button class="button button-outline" id="reveal-button" type="button" hidden>Ver respuesta</button>
+          <button class="button button-primary next-button" id="next-button" type="button" hidden>Siguiente tabla <span aria-hidden="true">→</span></button>
+        </div>
+        <p class="keyboard-note"><kbd>←</kbd><kbd>↑</kbd><kbd>↓</kbd><kbd>→</kbd> mover · <kbd>Enter</kbd> elegir · <kbd>M</kbd> sonido · <kbd>Esc</kbd> pausa</p>
+      </div>
+
+      <div class="board-side">
+        <div class="board-heading"><div><p class="eyebrow">TABLA SIMPLEX</p><h2 id="table-caption">Iteración inicial</h2></div><span class="level-badge" id="level-badge">BÁSICO</span></div>
+        <div class="table-scroll" id="table-wrap">
+          <table class="simplex-table" id="simplex-table" aria-label="Tabla simplex interactiva">
+            <caption class="sr-only">Tabla simplex interactiva. Selecciona columnas, renglones y elementos.</caption>
+            <thead id="table-head"></thead><tbody id="table-body"></tbody>
+          </table>
+        </div>
+        <p class="table-instruction"><span aria-hidden="true">⌖</span> Toca cualquier celda de la columna o renglón que quieras seleccionar.</p>
+        <div class="table-key" aria-hidden="true"><span><i class="key-column"></i> columna marcada</span><span><i class="key-row"></i> renglón marcado</span><span><i class="key-pivot"></i> pivote</span></div>
+      </div>
+    </section>
+
+    <section class="screen results-screen" id="screen-results" hidden aria-labelledby="results-title">
+      <div class="results-header"><p class="eyebrow">REPORTE DE PARTIDA</p><h1 id="results-title">¡Pivote localizado!</h1><p id="results-subtitle">Buen trabajo siguiendo el criterio simplex.</p></div>
+      <div class="results-layout">
+        <div class="results-main">
+          <div class="result-score"><span>PUNTAJE</span><strong id="final-score">0</strong><small id="record-message"></small></div>
+          <dl class="result-stats" id="result-stats"></dl>
+          <div class="results-actions"><button class="button button-primary" id="replay-button" type="button">Jugar otra vez <span aria-hidden="true">↻</span></button><button class="button button-outline" id="home-button" type="button">Volver al inicio</button></div>
+        </div>
+        <div class="review-card"><h2>Resumen de tablas</h2><ol id="review-list"></ol></div>
+      </div>
+    </section>
+  </main>
+
+  <div class="pause-overlay" id="pause-overlay" hidden>
+    <section class="pause-dialog" role="dialog" aria-modal="true" aria-labelledby="pause-title">
+      <p class="eyebrow">PARTIDA PAUSADA</p><h2 id="pause-title">Toma aire.</h2><p>El cronómetro está detenido.</p>
+      <button class="button button-primary" id="resume-button" type="button">Continuar <span aria-hidden="true">→</span></button>
+      <button class="text-button" id="quit-button" type="button">Salir al inicio</button>
+    </section>
+  </div>
+  <footer class="site-footer"><span>CAZA EL PIVOTE</span><span>Gimnasio 3 · Método Simplex</span><a href="README.md">Acerca del juego</a></footer>
+</body>
+</html>
