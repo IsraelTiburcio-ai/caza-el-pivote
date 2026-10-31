@@ -23,7 +23,7 @@ jobs:
       - name: Prepare site artifact
         run: |
           mkdir -p _site/assets
-          cp index.html styles.css script.js data.js README.md _site/
+          cp index.html styles.css script.js data.js optilab-results.js README.md _site/
           cp assets/*.svg _site/assets/
           touch _site/.nojekyll
       - name: Configure Pages

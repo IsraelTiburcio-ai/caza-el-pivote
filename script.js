@@ -2,6 +2,7 @@
   "use strict";
 
   const DATA = window.CAZA_DATA;
+  const optilabResults = window.OptiLabResults?.create('caza-el-pivote');
   const $ = (selector, root = document) => root.querySelector(selector);
   const $$ = (selector, root = document) => [...root.querySelectorAll(selector)];
   const KEY_MUTE = "caza-el-pivote-muted";
@@ -168,6 +169,7 @@
   }
   function startMatch() {
     if (!DATA || DATA.tablas.length < DATA.rondasPorPartida) return;
+    optilabResults?.start();
     clearInterval(state.clockInterval);
     audio.resume();
     state.active = true; state.paused = false; state.tables = makeMatch().map((item) => ({ ...item, answer: solve(item) }));
@@ -287,6 +289,7 @@
     $("#resume-button").focus({ preventScroll: true });
   }
   function quitToHome() {
+    optilabResults?.cancel();
     clearInterval(state.clockInterval);
     state.active = false; state.paused = false;
     $("#pause-overlay").hidden = true; setBackgroundInert(false);
@@ -423,6 +426,7 @@
       if (!state.results[i]) state.results[i] = { status: "incomplete", id: state.tables[i].id, level: state.tables[i].nivel };
     }
     const elapsed = Math.min(DATA.duracionSeg, Math.floor(elapsedAtEnd / 1000));
+    optilabResults?.complete({reason:reason==='time'?'time-limit':'completed',correct:state.firstTryHits,total:state.tables.length*3,attempts:state.attempts,errors:state.totalErrors,durationMs:elapsed*1000,score:state.points});
     const completed = state.results.filter((item) => item.status !== "incomplete").length;
     const clean = state.results.filter((item) => item.status === "clean").length;
     const accuracy = state.correctSelections ? Math.round(state.firstTryHits / state.correctSelections * 100) : 0;
